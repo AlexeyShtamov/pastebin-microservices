@@ -1,0 +1,67 @@
+version: "3.7"
+services:
+#  pastebin-service:
+#    build: /pastebin
+#    image: pastebin-service
+#    container_name: pastebin-service
+#    environment:
+#      - SPRING_PROFILES_ACTIVE=prod
+#    depends_on:
+#      - db
+#    networks:
+#      - app-network
+#    ports:
+#      - "8081:8081"
+#  s3-service:
+#    build: /s3-service
+#    image: s3-service
+#    container_name: s3-service
+#    environment:
+#      - SPRING_PROFILES_ACTIVE=prod
+#    depends_on:
+#      - db
+#    networks:
+#      - app-network
+#    ports:
+#      - "8083:8083"
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      PGDATA: "/var/lib/postgresql/data/"
+    volumes:
+      - ./init-database.sh:/docker-entrypoint-initdb.d/init-database.sh
+    ports:
+      - "127.0.0.1:5433:5432"
+  redis:
+    image: redis:latest
+    restart: always
+    container_name: redis
+    ports:
+      - "6379:6379"
+    command: redis-server --save 20 1 --loglevel warning --requirepass ZmFzZnNmc2Fmc2FkZgo=
+    volumes:
+      - /redis-data:/data
+    networks:
+      - redis-network
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - s3-service
+      - pastebin-service
+    networks:
+      - app-network
+
+volumes:
+  redis-data:
+
+networks:
+  redis-network:
+  app-network:
+

@@ -1,0 +1,30 @@
+spring:
+  application:
+    name: pastebin
+  datasource:
+    url: jdbc:postgresql://localhost:5433/pastebin_db
+    username: postgres
+    password: password
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: create-drop
+    open-in-view: true
+
+  cache:
+    type: redis
+    cache-names: redis-cache
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      password: ZmFzZnNmc2Fmc2FkZgo=
+url:
+  prefix: "localhost:8083/v1/texts/"
+
+secret:
+  key: "key12345"
+
+server:
+  port: 8081
